@@ -8,7 +8,7 @@ class Grid:
     self.PIXELSIZE = config['pixels per rect']
     self.SIZE = config['size']
     self.shouldDrawGrid = config['grid']
-    self.WHITE = (255, 0, 255)
+    self.WHITE = (255, 255, 255)
     self.BLACK = (0, 0, 0)
     self.BLUE = (0, 0, 255)
     self.hLines = []
@@ -44,6 +44,7 @@ class Grid:
 
   def launchPixelPainter(self):
     pygame.init()
+    pygame.display.set_caption('Ponto')
     self.screen.fill(self.BLACK)
 
     running = True
@@ -66,6 +67,8 @@ class Grid:
     exit()
 
   def launchBresenham(self):
+    pygame.init()
+    pygame.display.set_caption('Bresenham (Linha)')
     selected = []
     running = True
     clock = pygame.time.Clock()
@@ -106,6 +109,8 @@ class Grid:
 
   
   def launchSquares(self):
+    pygame.init()
+    pygame.display.set_caption('Quadrado')
     selected = []
     running = True
     clock = pygame.time.Clock()
@@ -152,6 +157,8 @@ class Grid:
 
   
   def launchTriangles(self):
+    pygame.init()
+    pygame.display.set_caption('Triângulo')
     selected = []
     running = True
     clock = pygame.time.Clock()
