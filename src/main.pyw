@@ -63,6 +63,7 @@ def cTriangle():
   t.start()
 
 window = tk.Tk()
+window.title(string="Primitivas Gráficas")
 containerInputs = tk.Frame()
 labelPixelSizeX = tk.Label(containerInputs, text='Tamanho X do pixel:')
 labelPixelSizeY = tk.Label(containerInputs, text='Tamanho Y do pixel:')
@@ -76,8 +77,8 @@ numPixelsY = tk.Entry(containerInputs)
 
 pixelSizeX.insert(0, '31')
 pixelSizeY.insert(0, '31')
-numPixelsX.insert(0, '50')
-numPixelsY.insert(0, '40')
+numPixelsX.insert(0, '25')
+numPixelsY.insert(0, '20')
 
 labelPixelSizeX.grid(row=1, column=1,  pady=(3, 0))
 labelPixelSizeY.grid(row=2, column=1, pady=(3, 0))
@@ -92,10 +93,10 @@ numPixelsY.grid(row=4, column=2, pady=(3, 0))
 containerInputs.pack(padx=5, pady=5)
 
 containerLaunchers = tk.Frame(window)
-btnPixelPainter = tk.Button(containerLaunchers, text="Pixel Painter", command=cPixelPainter)
+btnPixelPainter = tk.Button(containerLaunchers, text="Ponto", command=cPixelPainter)
 btnBresenham = tk.Button(containerLaunchers, text="Bresenham", command=cBresenham)
-btnSquare = tk.Button(containerLaunchers, text="Square", command=cSquare)
-btnTriangle = tk.Button(containerLaunchers, text="Triangle", command=cTriangle)
+btnSquare = tk.Button(containerLaunchers, text="Quadrado", command=cSquare)
+btnTriangle = tk.Button(containerLaunchers, text="Triangulo", command=cTriangle)
 
 btnPixelPainter.grid(row=1, column=1)
 btnBresenham.grid(row=1, column=2)
