@@ -1,66 +1,5 @@
 import tkinter as tk
-from threading import Thread
-from grid import Grid
-
-def cPixelPainter():
-  global pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid
-
-  draw = Grid(config={
-    'pixels per rect': (int(pixelSizeX.get()), int(pixelSizeY.get())),
-    'size': (int(numPixelsX.get()), int(numPixelsY.get())),
-    'grid': drawGrid.get()
-  })
-
-  def wrapper():
-    draw.launchPixelPainter()
-
-  t = Thread(target=wrapper)
-  t.start()
-
-def cBresenham():
-  global pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid
-
-  draw = Grid(config={
-    'pixels per rect': (int(pixelSizeX.get()), int(pixelSizeY.get())),
-    'size': (int(numPixelsX.get()), int(numPixelsY.get())),
-    'grid': drawGrid.get()
-  })
-
-  def wrapper():
-    draw.launchBresenham()
-
-  t = Thread(target=wrapper)
-  t.start()
-
-def cSquare():
-  global pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid
-
-  draw = Grid(config={
-    'pixels per rect': (int(pixelSizeX.get()), int(pixelSizeY.get())),
-    'size': (int(numPixelsX.get()), int(numPixelsY.get())),
-    'grid': drawGrid.get()
-  })
-
-  def wrapper():
-    draw.launchSquares()
-
-  t = Thread(target=wrapper)
-  t.start()
-
-def cTriangle():
-  global pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid
-
-  draw = Grid(config={
-    'pixels per rect': (int(pixelSizeX.get()), int(pixelSizeY.get())),
-    'size': (int(numPixelsX.get()), int(numPixelsY.get())),
-    'grid': drawGrid.get()
-  })
-
-  def wrapper():
-    draw.launchTriangles()
-
-  t = Thread(target=wrapper)
-  t.start()
+from wrappers import *
 
 window = tk.Tk()
 window.title(string="Primitivas Gráficas")
@@ -92,11 +31,16 @@ numPixelsY.grid(row=4, column=2, pady=(3, 0))
 
 containerInputs.pack(padx=5, pady=5)
 
+drawGrid = tk.IntVar()
+drawGrid.set(1)
+
+configTuple = (pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid)
+
 containerLaunchers = tk.Frame(window)
-btnPixelPainter = tk.Button(containerLaunchers, text="Ponto", command=cPixelPainter)
-btnBresenham = tk.Button(containerLaunchers, text="Bresenham", command=cBresenham)
-btnSquare = tk.Button(containerLaunchers, text="Quadrado", command=cSquare)
-btnTriangle = tk.Button(containerLaunchers, text="Triangulo", command=cTriangle)
+btnPixelPainter = tk.Button(containerLaunchers, text="Ponto", command=lambda: cPixelPainter(configTuple))
+btnBresenham = tk.Button(containerLaunchers, text="Bresenham", command=lambda: cBresenham(configTuple))
+btnSquare = tk.Button(containerLaunchers, text="Retangulo", command=lambda: cSquare(configTuple))
+btnTriangle = tk.Button(containerLaunchers, text="Triangulo", command=lambda: cTriangle(configTuple))
 
 btnPixelPainter.grid(row=1, column=1)
 btnBresenham.grid(row=1, column=2)
@@ -104,9 +48,6 @@ btnSquare.grid(row=1, column=3)
 btnTriangle.grid(row=2, column=1)
 
 containerLaunchers.pack(padx=5, pady=5)
-
-drawGrid = tk.IntVar()
-drawGrid.set(1)
 
 c1 = tk.Checkbutton(window, text='Desenhar Grade', onvalue=1, offvalue=0, variable=drawGrid)
 c1.pack()
