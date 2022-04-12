@@ -1,6 +1,3 @@
-def draw(point: tuple) -> None:
-  print(f'{point[0]}, {point[1]}')
-
 def reflect(p1: tuple, p2: tuple) -> tuple:
   x1, y1 = p1
   x2, y2 = p2

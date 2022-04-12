@@ -1,6 +1,6 @@
 import pygame
-from math import floor
-from bres import bres
+from math import floor, sqrt
+from Algorithms.index import *
 from sys import exit
 
 class Grid:
@@ -10,11 +10,11 @@ class Grid:
     self.shouldDrawGrid = config['grid']
     self.WHITE = (255, 255, 255)
     self.BLACK = (0, 0, 0)
-    self.BLUE = (0, 0, 255)
     self.hLines = []
     self.vLines = []
     self.screen = pygame.display.set_mode((self.SIZE[0]*self.PIXELSIZE[0], self.SIZE[1]*self.PIXELSIZE[1]))
     pygame.display.set_caption('Grade')
+    pygame.display.set_icon(pygame.image.load('src/assets/image.png'))
 
     for hLine in range(1, self.SIZE[0]):
       start = (hLine*self.PIXELSIZE[0], 0)
@@ -95,8 +95,6 @@ class Grid:
             self.screen.fill(self.BLACK)
             for point in points:
               self.drawPixel(point, self.WHITE)
-
-              pygame.draw.line(self.screen, self.BLUE, (floor(start[0]*self.PIXELSIZE[0]+(self.PIXELSIZE[0]/2)), floor(start[1]*self.PIXELSIZE[1]+(self.PIXELSIZE[1]/2))), ((floor(end[0]*self.PIXELSIZE[0]+(self.PIXELSIZE[0]/2)), floor(end[1]*self.PIXELSIZE[1]+(self.PIXELSIZE[1]/2)))))
 
       clock.tick(60)
       self.drawGrid()
@@ -194,5 +192,47 @@ class Grid:
       self.drawGrid()
       pygame.display.update()  
   
+    pygame.display.quit()
+    exit()
+
+
+  def launchCircles(self):
+    selected = []
+    running = True
+    clock = pygame.time.Clock()
+
+    self.screen.fill(self.BLACK)
+    while running:
+      for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+          running = False
+
+        if event.type == pygame.MOUSEBUTTONUP:
+          if len(selected) == 0:
+            self.screen.fill(self.BLACK)
+
+          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
+          self.drawPixel(coords, self.WHITE)
+          selected.append(coords)
+
+          if len(selected) == 2:
+            center = selected[0]
+            x1, y1 = selected[0]
+            x2, y2 = selected[1]
+
+            radius = round(sqrt(((x2 - x1) ** 2) + (y2 - y1) ** 2))
+
+            octants = circle(center, radius)
+
+            selected = []
+            self.screen.fill(self.BLACK)
+            for octant in octants:
+              for point in octant:
+                self.drawPixel(point, self.WHITE)
+
+      clock.tick(60)
+      self.drawGrid()
+      pygame.display.update()  
+
     pygame.display.quit()
     exit()
