@@ -243,3 +243,88 @@ class Grid:
 
     pygame.display.quit()
     exit()
+  
+  def launchEllipsis(self):
+    selected = []
+    running = True
+    clock = pygame.time.Clock()
+    oscilating = [30, 30, 30]
+    increment = True
+    mousePos = []
+
+    self.screen.fill(self.BLACK)
+    while running:
+      for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+          running = False
+          pygame.display.quit()
+          exit()
+
+        if event.type == pygame.MOUSEMOTION:
+          mousePos = event.pos
+
+        if event.type == pygame.MOUSEBUTTONUP:
+          if len(selected) == 0:
+            self.screen.fill(self.BLACK)
+
+          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
+          self.drawPixel(coords, self.WHITE)
+          selected.append(coords)
+
+          if len(selected) == 2:
+            x1, y1 = selected[0]
+            x2, y2 = selected[1]
+
+            radii = (abs(x2-x1), abs(y2-y1))
+            regions = ellipsis(radii, (x1, y1))
+
+            selected = []
+            self.screen.fill(self.BLACK)
+            for region in regions:
+              for point in region:
+                self.drawPixel(point, self.WHITE, self.animate)
+
+      if len(selected) == 1:
+        coords = (floor(mousePos[0]/self.PIXELSIZE[0]), floor(mousePos[1]/self.PIXELSIZE[1]))
+
+        x1, y1 = coords
+        x2, y2 = selected[0]
+
+        edges = []
+        if x1 != x2 and y1 != y2:
+          edges = [
+            bres((x1, y1), (x2, y1)),
+            bres((x2, y1), (x2, y2)),
+            bres((x2, y2), (x1, y2)),
+            bres((x1, y2), (x1, y1)),
+          ]
+
+        self.screen.fill(self.BLACK)
+        self.drawPixel(selected[0], self.WHITE)
+        for edge in edges:
+          for point in edge:
+            self.drawPixel(point, tuple(oscilating))
+
+
+      clock.tick(60)
+      self.drawGrid()
+      pygame.display.update()
+
+      if increment:
+        oscilating[0] += 1
+        oscilating[1] += 1
+        oscilating[2] += 1
+
+      else:
+        oscilating[0] -= 1
+        oscilating[1] -= 1
+        oscilating[2] -= 1
+
+      if oscilating[0] == 100:
+        increment = False
+      elif oscilating[0] == 30:
+        increment = True
+      
+  
+    pygame.display.quit()
+    exit()

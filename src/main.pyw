@@ -53,12 +53,14 @@ btnBresenham = tk.Button(containerLaunchers, text="Bresenham", command=lambda: c
 btnSquare = tk.Button(containerLaunchers, text="Retangulo", command=lambda: cSquare(configTuple))
 btnTriangle = tk.Button(containerLaunchers, text="Triangulo", command=lambda: cTriangle(configTuple))
 btnCircle = tk.Button(containerLaunchers, text="Circulo", command=lambda: cCircle(configTuple))
+btnEllipsis = tk.Button(containerLaunchers, text="Elípse", command=lambda: cEllipsis(configTuple))
 
 btnPixelPainter.grid(row=1, column=1, sticky='nesw')
 btnBresenham.grid(row=1, column=2, sticky='nesw')
 btnSquare.grid(row=1, column=3, sticky='nesw')
 btnTriangle.grid(row=2, column=1, sticky='nesw')
 btnCircle.grid(row=2, column=2, sticky='nesw')
+btnEllipsis.grid(row=2, column=3, sticky='nesw')
 
 containerLaunchers.pack(padx=5, pady=5)
 

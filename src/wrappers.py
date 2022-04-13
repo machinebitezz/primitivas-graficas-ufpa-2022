@@ -70,3 +70,18 @@ def cCircle(config: object):
 
   t = Thread(target=draw.launchCircles)
   t.start()
+
+
+def cEllipsis(config: object):
+  pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid, animate, animationDelay = config
+
+  draw = Grid(config={
+    'pixels per rect': (int(pixelSizeX.get()), int(pixelSizeY.get())),
+    'size': (int(numPixelsX.get()), int(numPixelsY.get())),
+    'grid': drawGrid.get(),
+    'animate': animate.get(),
+    'delay': float(animationDelay.get())/1000
+  })
+
+  t = Thread(target=draw.launchEllipsis)
+  t.start()
