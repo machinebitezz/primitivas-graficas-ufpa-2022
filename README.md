@@ -13,4 +13,7 @@ sudo apt-get install python-tk
 
 # arch-based
 sudo pacman -S tk
+
+# poetry
+poetry install
 ```

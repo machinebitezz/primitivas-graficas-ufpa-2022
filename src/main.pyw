@@ -15,10 +15,14 @@ labelNumPixelsY = tk.Label(containerInputs, text="Numero de Pixels Y:")
 numPixelsX = tk.Entry(containerInputs)
 numPixelsY = tk.Entry(containerInputs)
 
+labelAnimation = tk.Label(containerInputs, text="Delay da animação (ms):")
+animationDelay = tk.Entry(containerInputs)
+
 pixelSizeX.insert(0, '15')
 pixelSizeY.insert(0, '15')
 numPixelsX.insert(0, '70')
 numPixelsY.insert(0, '45')
+animationDelay.insert(0, '200')
 
 labelPixelSizeX.grid(row=1, column=1,  pady=(3, 0))
 labelPixelSizeY.grid(row=2, column=1, pady=(3, 0))
@@ -30,12 +34,18 @@ labelNumPixelsY.grid(row=4, column=1, pady=(3, 0))
 numPixelsX.grid(row=3, column=2, pady=(3, 0))
 numPixelsY.grid(row=4, column=2, pady=(3, 0))
 
+
+labelAnimation.grid(row=5, column=1, pady=(3, 0))
+animationDelay.grid(row=5, column=2, pady=(3, 0))
+
 containerInputs.pack(padx=5, pady=5)
 
 drawGrid = tk.IntVar()
 drawGrid.set(1)
+animate = tk.IntVar()
+animate.set(0)
 
-configTuple = (pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid)
+configTuple = (pixelSizeX, pixelSizeY, numPixelsX, numPixelsY, drawGrid, animate, animationDelay)
 
 containerLaunchers = tk.Frame(window)
 btnPixelPainter = tk.Button(containerLaunchers, text="Ponto", command=lambda: cPixelPainter(configTuple))
@@ -54,5 +64,8 @@ containerLaunchers.pack(padx=5, pady=5)
 
 drawGridCheck = tk.Checkbutton(window, text='Desenhar Grade', onvalue=1, offvalue=0, variable=drawGrid)
 drawGridCheck.pack()
+
+animateCheck = tk.Checkbutton(window, text='Animação', onvalue=1, offvalue=0, variable=animate)
+animateCheck.pack()
 
 window.mainloop()

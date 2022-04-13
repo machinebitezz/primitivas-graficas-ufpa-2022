@@ -2,12 +2,15 @@ import pygame
 from math import floor, sqrt
 from Algorithms.index import *
 from sys import exit
+from time import sleep
 
 class Grid:
   def __init__(self, config: object):
     self.PIXELSIZE = config['pixels per rect']
     self.SIZE = config['size']
     self.shouldDrawGrid = config['grid']
+    self.animate = config['animate']
+    self.delay = config['delay']
     self.WHITE = (255, 255, 255)
     self.BLACK = (0, 0, 0)
     self.hLines = []
@@ -27,9 +30,13 @@ class Grid:
       self.vLines.append((start, end))
 
   
-  def drawPixel(self, position, color):
+  def drawPixel(self, position, color, animate=False):
     pos = (position[0]*self.PIXELSIZE[0], position[1]*self.PIXELSIZE[1])
     pygame.draw.rect(self.screen, color, pygame.Rect(pos, self.PIXELSIZE))
+    if animate:
+      self.drawGrid()
+      pygame.display.update()
+      sleep(self.delay)
 
 
   def drawGrid(self):
@@ -57,7 +64,7 @@ class Grid:
           
         if event.type == pygame.MOUSEBUTTONUP:
           coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
+          self.drawPixel(coords, self.WHITE, self.animate)
 
       clock.tick(60)
       self.drawGrid()
@@ -94,7 +101,7 @@ class Grid:
             selected = []
             self.screen.fill(self.BLACK)
             for point in points:
-              self.drawPixel(point, self.WHITE)
+              self.drawPixel(point, self.WHITE, self.animate)
 
       clock.tick(60)
       self.drawGrid()
@@ -140,7 +147,7 @@ class Grid:
             self.screen.fill(self.BLACK)
             for edge in edges:
               for point in edge:
-                self.drawPixel(point, self.WHITE)
+                self.drawPixel(point, self.WHITE, self.animate)
 
       clock.tick(60)
       self.drawGrid()
@@ -186,7 +193,7 @@ class Grid:
             self.screen.fill(self.BLACK)
             for edge in edges:
               for point in edge:
-                self.drawPixel(point, self.WHITE)
+                self.drawPixel(point, self.WHITE, self.animate)
 
       clock.tick(60)
       self.drawGrid()
@@ -228,7 +235,7 @@ class Grid:
             self.screen.fill(self.BLACK)
             for octant in octants:
               for point in octant:
-                self.drawPixel(point, self.WHITE)
+                self.drawPixel(point, self.WHITE, self.animate)
 
       clock.tick(60)
       self.drawGrid()
