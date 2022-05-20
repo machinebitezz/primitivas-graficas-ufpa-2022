@@ -1,330 +1,161 @@
-import pygame
-from math import floor, sqrt
+import tkinter as tk
 from Algorithms.index import *
-from sys import exit
-from time import sleep
 
 class Grid:
-  def __init__(self, config: object):
-    self.PIXELSIZE = config['pixels per rect']
-    self.SIZE = config['size']
-    self.shouldDrawGrid = config['grid']
-    self.animate = config['animate']
-    self.delay = config['delay']
-    self.WHITE = (255, 255, 255)
-    self.BLACK = (0, 0, 0)
-    self.hLines = []
-    self.vLines = []
-    self.screen = pygame.display.set_mode((self.SIZE[0]*self.PIXELSIZE[0], self.SIZE[1]*self.PIXELSIZE[1]))
-    pygame.display.set_caption('Grade')
-    pygame.display.set_icon(pygame.image.load('src/assets/image.png'))
+  def __init__(self, window):
+    self.tamanhoTela = 400
+    self.tamanhoPixel = int(self.tamanhoTela / 40)
+    self.window = window
+    self.drawnPoints = []
 
-    for hLine in range(1, self.SIZE[0]):
-      start = (hLine*self.PIXELSIZE[0], 0)
-      end = (hLine*self.PIXELSIZE[0], self.PIXELSIZE[1]*self.SIZE[1])
-      self.hLines.append((start, end))
+    containerCanvas = tk.Frame(self.window)
+    self.tela = tk.Canvas(containerCanvas, width=self.tamanhoTela, height=self.tamanhoTela)
 
-    for vLine in range(1, self.SIZE[1]):
-      start = (0, vLine*self.PIXELSIZE[1])
-      end = (self.PIXELSIZE[0]*self.SIZE[0], vLine*self.PIXELSIZE[1])
-      self.vLines.append((start, end))
+    self.clear()
+
+    self.tela.pack()
+    containerCanvas.pack(padx=5, pady=5)
 
   
-  def drawPixel(self, position, color, animate=False):
-    pos = (position[0]*self.PIXELSIZE[0], position[1]*self.PIXELSIZE[1])
-    pygame.draw.rect(self.screen, color, pygame.Rect(pos, self.PIXELSIZE))
-    if animate:
-      self.drawGrid()
-      pygame.display.update()
-      sleep(self.delay)
+  def clear(self):
+    self.drawnPoints = []
+    self.tela.create_rectangle(0, 0, self.tamanhoTela+1, self.tamanhoTela+1, fill="#FFFFFF")
+
+    for x in range(0, self.tamanhoTela, self.tamanhoPixel):
+      self.tela.create_line(x, 0, x, self.tamanhoTela, fill="#808080")
+
+    for y in range(0, self.tamanhoTela, self.tamanhoPixel):
+      self.tela.create_line(0, y, self.tamanhoTela, y, fill="#808080")
 
 
-  def drawGrid(self):
-    if self.shouldDrawGrid:
-      for hLine in self.hLines:
-        start, end = hLine
-        pygame.draw.line(self.screen, (80, 0, 0), start, end)
+  def drawPixel(self, coords):
+    x, y = coords
+    truex = (x+20)*self.tamanhoPixel + 1
+    truey = (y+20)*self.tamanhoPixel + 1
 
-      for vLine in self.vLines:
-        start, end = vLine
-        pygame.draw.line(self.screen, (80, 0, 0), start, end)
+    self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill="#00FF00", width=0)
 
 
-  def launchPixelPainter(self):
-    pygame.init()
-    self.screen.fill(self.BLACK)
-
-    running = True
-    clock=pygame.time.Clock()
-
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
-          
-        if event.type == pygame.MOUSEBUTTONUP:
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE, self.animate)
-
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()
-  
-    pygame.quit()
-    exit()
-
-  def launchBresenham(self):
-    selected = []
-    running = True
-    clock = pygame.time.Clock()
-
-    self.screen.fill(self.BLACK)
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
-          pygame.display.quit()
-          exit()
-
-        if event.type == pygame.MOUSEBUTTONUP:
-          if len(selected) == 0:
-            self.screen.fill(self.BLACK)
-
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
-          selected.append(coords)
-
-          if len(selected) == 2:
-            points = bres(selected[0], selected[1])
-            start = selected[0]
-            end = selected[1]
-            selected = []
-            self.screen.fill(self.BLACK)
-            for point in points:
-              self.drawPixel(point, self.WHITE, self.animate)
-
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()  
-  
-    pygame.display.quit()
-    exit()
-
-  
-  def launchSquares(self):
-    selected = []
-    running = True
-    clock = pygame.time.Clock()
-
-    self.screen.fill(self.BLACK)
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
-          pygame.display.quit()
-          exit()
-
-        if event.type == pygame.MOUSEBUTTONUP:
-          if len(selected) == 0:
-            self.screen.fill(self.BLACK)
-
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
-          selected.append(coords)
-
-          if len(selected) == 2:
-            x1, y1 = selected[0]
-            x2, y2 = selected[1]
-
-            edges = [
-              bres((x1, y1), (x2, y1)),
-              bres((x2, y1), (x2, y2)),
-              bres((x2, y2), (x1, y2)),
-              bres((x1, y2), (x1, y1)),
-            ]
-
-            selected = []
-            self.screen.fill(self.BLACK)
-            for edge in edges:
-              for point in edge:
-                self.drawPixel(point, self.WHITE, self.animate)
-
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()  
-  
-    pygame.display.quit()
-    exit()
-
-  
-  def launchTriangles(self):
-    selected = []
-    running = True
-    clock = pygame.time.Clock()
-
-    self.screen.fill(self.BLACK)
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
-          pygame.display.quit()
-          exit()
-
-        if event.type == pygame.MOUSEBUTTONUP:
-          if len(selected) == 0:
-            self.screen.fill(self.BLACK)
-
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
-          selected.append(coords)
-
-          if len(selected) == 3:
-            x1, y1 = selected[0]
-            x2, y2 = selected[1]
-            x3, y3 = selected[2]
-
-            edges = [
-              bres((x1, y1), (x2, y2)),
-              bres((x2, y2), (x3, y3)),
-              bres((x3, y3), (x1, y1))
-            ]
-
-            selected = []
-            self.screen.fill(self.BLACK)
-            for edge in edges:
-              for point in edge:
-                self.drawPixel(point, self.WHITE, self.animate)
-
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()  
-  
-    pygame.display.quit()
-    exit()
+  def drawFromList(self, list):
+    self.drawnPoints += list
+    for point in list:
+      self.drawPixel(point)
 
 
-  def launchCircles(self):
-    selected = []
-    running = True
-    clock = pygame.time.Clock()
+  def bres(self):
+    def run():
+      print('aq')
+      p1 = int(entryx1.get()), int(entryy1.get())
+      p2 = (int(entryx2.get()), int(entryy2.get()))
 
-    self.screen.fill(self.BLACK)
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
+      self.drawFromList(bres(p1, p2))
 
-        if event.type == pygame.MOUSEBUTTONUP:
-          if len(selected) == 0:
-            self.screen.fill(self.BLACK)
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelx1 = tk.Label(popup, text="Coordenada x do ponto 1: ")
+    labely1 = tk.Label(popup, text="Coordenada y do ponto 1: ")
+    labelx2 = tk.Label(popup, text="Coordenada x do ponto 2: ")
+    labely2 = tk.Label(popup, text="Coordenada y do ponto 2: ")
 
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
-          selected.append(coords)
+    entryx1 = tk.Entry(popup)
+    entryy1 = tk.Entry(popup)
+    entryx2 = tk.Entry(popup)
+    entryy2 = tk.Entry(popup)
+    
+    labelx1.grid(row=1, column=1)
+    labely1.grid(row=2, column=1)
+    labelx2.grid(row=3, column=1)
+    labely2.grid(row=4, column=1)
 
-          if len(selected) == 2:
-            center = selected[0]
-            x1, y1 = selected[0]
-            x2, y2 = selected[1]
+    entryx1.grid(row=1, column=2)
+    entryy1.grid(row=2, column=2)
+    entryx2.grid(row=3, column=2)
+    entryy2.grid(row=4, column=2)
 
-            radius = round(sqrt(((x2 - x1) ** 2) + (y2 - y1) ** 2))
-
-            octants = circle(center, radius)
-
-            selected = []
-            self.screen.fill(self.BLACK)
-            for octant in octants:
-              for point in octant:
-                self.drawPixel(point, self.WHITE, self.animate)
-
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()  
-
-    pygame.display.quit()
-    exit()
-  
-  def launchEllipsis(self):
-    selected = []
-    running = True
-    clock = pygame.time.Clock()
-    oscilating = [30, 30, 30]
-    increment = True
-    mousePos = []
-
-    self.screen.fill(self.BLACK)
-    while running:
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          running = False
-          pygame.display.quit()
-          exit()
-
-        if event.type == pygame.MOUSEMOTION:
-          mousePos = event.pos
-
-        if event.type == pygame.MOUSEBUTTONUP:
-          if len(selected) == 0:
-            self.screen.fill(self.BLACK)
-
-          coords = (floor(event.pos[0]/self.PIXELSIZE[0]), floor(event.pos[1]/self.PIXELSIZE[1]))
-          self.drawPixel(coords, self.WHITE)
-          selected.append(coords)
-
-          if len(selected) == 2:
-            x1, y1 = selected[0]
-            x2, y2 = selected[1]
-
-            radii = (abs(x2-x1), abs(y2-y1))
-            regions = ellipsis(radii, (x1, y1))
-
-            selected = []
-            self.screen.fill(self.BLACK)
-            for region in regions:
-              for point in region:
-                self.drawPixel(point, self.WHITE, self.animate)
-
-      if len(selected) == 1:
-        coords = (floor(mousePos[0]/self.PIXELSIZE[0]), floor(mousePos[1]/self.PIXELSIZE[1]))
-
-        x1, y1 = coords
-        x2, y2 = selected[0]
-
-        edges = []
-        if x1 != x2 and y1 != y2:
-          edges = [
-            bres((x1, y1), (x2, y1)),
-            bres((x2, y1), (x2, y2)),
-            bres((x2, y2), (x1, y2)),
-            bres((x1, y2), (x1, y1)),
-          ]
-
-        self.screen.fill(self.BLACK)
-        self.drawPixel(selected[0], self.WHITE)
-        for edge in edges:
-          for point in edge:
-            self.drawPixel(point, tuple(oscilating))
+    entryx1.insert(0, '0')
+    entryy1.insert(0, '0')
+    entryx2.insert(0, '0')
+    entryy2.insert(0, '0')
+    
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=5, column=2)
 
 
-      clock.tick(60)
-      self.drawGrid()
-      pygame.display.update()
+  def cricle(self):
+    def run():
+      center = (int(entryx.get()), int(entryy.get()))
+      radius = int(entryRadius.get())
 
-      if increment:
-        oscilating[0] += 1
-        oscilating[1] += 1
-        oscilating[2] += 1
+      self.drawFromList(circle(center, radius))
 
-      else:
-        oscilating[0] -= 1
-        oscilating[1] -= 1
-        oscilating[2] -= 1
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelx = tk.Label(popup, text="Coordenada x do centro: ")
+    labely = tk.Label(popup, text="Coordenada y do centro: ")
+    labelRadius = tk.Label(popup, text="Raio: ")
 
-      if oscilating[0] == 100:
-        increment = False
-      elif oscilating[0] == 30:
-        increment = True
-      
-  
-    pygame.display.quit()
-    exit()
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    entryRadius = tk.Entry(popup)
+    
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+    labelRadius.grid(row=3, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+    entryRadius.grid(row=3, column=2)
+
+    entryx.insert(0, '0')
+    entryy.insert(0, '0')
+    entryRadius.insert(0, '5')
+
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=5, column=2)
+
+
+  def polyline(self):
+    def run():
+      nonlocal pointList
+      points = []
+      for index, point in enumerate(pointList):
+        if (index == len(pointList)-1):
+          points.append(bres(point, pointList[0]))
+
+        else:
+          points.append(bres(point, pointList[index+1]))
+
+      singleList = []
+      for list in points:
+        singleList += list
+
+      self.drawFromList(singleList)
+      pointList = []
+      labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    def add():
+      point = (int(entryx.get()), int(entryy.get()))
+      pointList.append(point)
+      labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    pointList = []
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelCount = tk.Label(popup, text="Pontos inseridos: []")
+    labelx = tk.Label(popup, text="Coordenada x do ponto: ")
+    labely = tk.Label(popup, text="Coordenada y do ponto: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    entryx.insert(0, '0')
+    entryy.insert(0, '0')
+
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+
+    labelCount.grid(row=3, column=1)
+
+    btnAdd = tk.Button(popup, text="Adicionar", command=add)
+    btnAdd.grid(row=4, column=1)
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=4, column=2)

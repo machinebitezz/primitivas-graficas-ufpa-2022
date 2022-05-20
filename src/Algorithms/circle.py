@@ -25,4 +25,8 @@ def circle(center: tuple, radius: int) -> list:
 
     points.append(getPoints((x, y), center))
 
-  return points
+  singleList = []
+  for listOfPoints in points:
+    singleList += listOfPoints
+
+  return singleList
