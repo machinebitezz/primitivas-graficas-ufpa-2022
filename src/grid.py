@@ -2,9 +2,10 @@ import tkinter as tk
 from Algorithms.index import *
 
 class Grid:
-  def __init__(self, window):
-    self.tamanhoTela = 400
-    self.tamanhoPixel = int(self.tamanhoTela / 40)
+  def __init__(self, window, numPixels, tamanhoTela):
+    self.numPixels = numPixels
+    self.tamanhoTela = tamanhoTela
+    self.tamanhoPixel = int(self.tamanhoTela / self.numPixels)
     self.window = window
     self.drawnPoints = []
 
@@ -30,8 +31,8 @@ class Grid:
 
   def drawPixel(self, coords):
     x, y = coords
-    truex = (x+20)*self.tamanhoPixel + 1
-    truey = (y+20)*self.tamanhoPixel + 1
+    truex = (x)*self.tamanhoPixel + 1
+    truey = (self.numPixels-y-1)*self.tamanhoPixel + 1
 
     self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill="#00FF00", width=0)
 
@@ -44,7 +45,6 @@ class Grid:
 
   def bres(self):
     def run():
-      print('aq')
       p1 = int(entryx1.get()), int(entryy1.get())
       p2 = (int(entryx2.get()), int(entryy2.get()))
 

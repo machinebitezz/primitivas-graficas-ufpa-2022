@@ -6,7 +6,7 @@ window = tk.Tk()
 window.iconphoto(False, tk.PhotoImage(file="src/assets/image.png"))
 window.title(string="Primitivas Gráficas")
 
-grid = Grid(window)
+grid = Grid(window, 10, 400)
 
 containerLaunchers = tk.Frame(window)
 btnBresenham = tk.Button(containerLaunchers, text="Bresenham", command=lambda: grid.bres())
