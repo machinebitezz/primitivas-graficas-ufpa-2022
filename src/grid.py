@@ -34,7 +34,7 @@ class Grid:
     truex = (x)*self.tamanhoPixel + 1
     truey = (self.numPixels-y-1)*self.tamanhoPixel + 1
 
-    self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill="#00FF00", width=0)
+    self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill="#000000", width=0)
 
 
   def drawFromList(self, list):
@@ -115,21 +115,22 @@ class Grid:
   def polyline(self):
     def run():
       nonlocal pointList
-      points = []
-      for index, point in enumerate(pointList):
-        if (index == len(pointList)-1):
-          points.append(bres(point, pointList[0]))
+      if len(pointList) != 0:
+        points = []
+        for index, point in enumerate(pointList):
+          if (index == len(pointList)-1):
+            points.append(bres(point, pointList[0]))
 
-        else:
-          points.append(bres(point, pointList[index+1]))
+          else:
+            points.append(bres(point, pointList[index+1]))
 
-      singleList = []
-      for list in points:
-        singleList += list
+        singleList = []
+        for list in points:
+          singleList += list
 
-      self.drawFromList(singleList)
-      pointList = []
-      labelCount.config(text=f"Pontos inseridos: {pointList}")
+        self.drawFromList(singleList)
+        pointList = []
+        labelCount.config(text=f"Pontos inseridos: {pointList}")
 
     def add():
       point = (int(entryx.get()), int(entryy.get()))
@@ -159,3 +160,65 @@ class Grid:
     btnAdd.grid(row=4, column=1)
     btnDraw = tk.Button(popup, text="Desenhar", command=run)
     btnDraw.grid(row=4, column=2)
+
+  def curve(self):
+    def run():
+      nonlocal pointList
+      if len(pointList) != 0:
+        n = int(entryDegree.get())
+        steps = int(entrySteps.get())
+        bezierPoints = curve(n, pointList, steps)
+        points = []
+
+        print(bezierPoints)
+        
+        for index, point in enumerate(bezierPoints):
+          if (index < len(bezierPoints)-1):
+            points.append(bres(tuple(point), tuple(bezierPoints[index+1])))
+
+        singleList = []
+        for list in points:
+          singleList += tuple(list)
+
+        self.drawFromList(singleList)
+        pointList = []
+        labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    def add():
+      point = [int(entryx.get()), int(entryy.get())]
+      pointList.append(point)
+      labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    pointList = []
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelCount = tk.Label(popup, text="Pontos inseridos: []")
+    labelx = tk.Label(popup, text="Coordenada x do ponto: ")
+    labely = tk.Label(popup, text="Coordenada y do ponto: ")
+    labelDegree = tk.Label(popup, text="Grau da curva: ")
+    labelSteps = tk.Label(popup, text="Passos: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    entryDegree = tk.Entry(popup)
+    entrySteps = tk.Entry(popup)
+    entryx.insert(0, '0')
+    entryy.insert(0, '0')
+    entryDegree.insert(0, '3')
+    entrySteps.insert(0, '5')
+
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+    labelDegree.grid(row=3, column=1)
+    labelSteps.grid(row=4, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+    entryDegree.grid(row=3, column=2)
+    entrySteps.grid(row=4, column=2)
+
+    labelCount.grid(row=5, column=1)
+
+    btnAdd = tk.Button(popup, text="Adicionar", command=add)
+    btnAdd.grid(row=6, column=1)
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=6, column=2)

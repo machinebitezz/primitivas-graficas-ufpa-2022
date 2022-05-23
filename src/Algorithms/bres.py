@@ -54,6 +54,9 @@ def unreflect(points: list, refl: dict) -> list:
   return newPoints
 
 def bres(p1: tuple , p2: tuple) -> list:
+  if (p2[0] - p1[0] == 0 and p2[1] - p1[1] == 0):
+    return [p1]
+
   p1, p2, REFLECTED = reflect(p1, p2)
 
   x1, y1 = p1
