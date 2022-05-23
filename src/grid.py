@@ -70,11 +70,6 @@ class Grid:
     entryy1.grid(row=2, column=2)
     entryx2.grid(row=3, column=2)
     entryy2.grid(row=4, column=2)
-
-    entryx1.insert(0, '0')
-    entryy1.insert(0, '0')
-    entryx2.insert(0, '0')
-    entryy2.insert(0, '0')
     
     btnDraw = tk.Button(popup, text="Desenhar", command=run)
     btnDraw.grid(row=5, column=2)
@@ -103,10 +98,6 @@ class Grid:
     entryx.grid(row=1, column=2)
     entryy.grid(row=2, column=2)
     entryRadius.grid(row=3, column=2)
-
-    entryx.insert(0, '0')
-    entryy.insert(0, '0')
-    entryRadius.insert(0, '5')
 
     btnDraw = tk.Button(popup, text="Desenhar", command=run)
     btnDraw.grid(row=5, column=2)
@@ -145,8 +136,6 @@ class Grid:
 
     entryx = tk.Entry(popup)
     entryy = tk.Entry(popup)
-    entryx.insert(0, '0')
-    entryy.insert(0, '0')
 
     labelx.grid(row=1, column=1)
     labely.grid(row=2, column=1)
@@ -166,11 +155,11 @@ class Grid:
       nonlocal pointList
       if len(pointList) != 0:
         n = int(entryDegree.get())
+        start = [[int(entryxInit.get()), int(entryyInit.get())]]
+        end = [[int(entryxFinal.get()), int(entryyFinal.get())]]
         steps = int(entrySteps.get())
-        bezierPoints = curve(n, pointList, steps)
+        bezierPoints = curve(n, start+pointList+end, steps)
         points = []
-
-        print(bezierPoints)
         
         for index, point in enumerate(bezierPoints):
           if (index < len(bezierPoints)-1):
@@ -185,40 +174,55 @@ class Grid:
         labelCount.config(text=f"Pontos inseridos: {pointList}")
 
     def add():
-      point = [int(entryx.get()), int(entryy.get())]
+      point = [int(entryxControl.get()), int(entryyControl.get())]
       pointList.append(point)
       labelCount.config(text=f"Pontos inseridos: {pointList}")
 
     pointList = []
     popup = tk.Toplevel(self.window, padx=5, pady=5)
     labelCount = tk.Label(popup, text="Pontos inseridos: []")
-    labelx = tk.Label(popup, text="Coordenada x do ponto: ")
-    labely = tk.Label(popup, text="Coordenada y do ponto: ")
+    labelxInit = tk.Label(popup, text="Coordenada x do ponto inicial: ")
+    labelyInit = tk.Label(popup, text="Coordenada y do ponto inicial: ")
+    labelxControl = tk.Label(popup, text="Coordenada x do ponto de controle: ")
+    labelyControl = tk.Label(popup, text="Coordenada y do ponto de controle: ")
+    labelxFinal = tk.Label(popup, text="Coordenada x do ponto final: ")
+    labelyFinal = tk.Label(popup, text="Coordenada y do ponto final: ")
     labelDegree = tk.Label(popup, text="Grau da curva: ")
     labelSteps = tk.Label(popup, text="Passos: ")
 
-    entryx = tk.Entry(popup)
-    entryy = tk.Entry(popup)
+    entryxInit = tk.Entry(popup)
+    entryyInit = tk.Entry(popup)
+    entryxControl = tk.Entry(popup)
+    entryyControl = tk.Entry(popup)
+    entryxFinal = tk.Entry(popup)
+    entryyFinal = tk.Entry(popup)
     entryDegree = tk.Entry(popup)
     entrySteps = tk.Entry(popup)
-    entryx.insert(0, '0')
-    entryy.insert(0, '0')
+
     entryDegree.insert(0, '3')
     entrySteps.insert(0, '5')
 
-    labelx.grid(row=1, column=1)
-    labely.grid(row=2, column=1)
-    labelDegree.grid(row=3, column=1)
-    labelSteps.grid(row=4, column=1)
+    labelxInit.grid(row=1, column=1)
+    labelyInit.grid(row=2, column=1)
+    labelxControl.grid(row=3, column=1)
+    labelyControl.grid(row=4, column=1)
+    labelxFinal.grid(row=5, column=1)
+    labelyFinal.grid(row=6, column=1)
+    labelDegree.grid(row=7, column=1)
+    labelSteps.grid(row=8, column=1)
 
-    entryx.grid(row=1, column=2)
-    entryy.grid(row=2, column=2)
-    entryDegree.grid(row=3, column=2)
-    entrySteps.grid(row=4, column=2)
+    entryxInit.grid(row=1, column=2)
+    entryyInit.grid(row=2, column=2)
+    entryxControl.grid(row=3, column=2)
+    entryyControl.grid(row=4, column=2)
+    entryxFinal.grid(row=5, column=2)
+    entryyFinal.grid(row=6, column=2)
+    entryDegree.grid(row=7, column=2)
+    entrySteps.grid(row=8, column=2)
 
-    labelCount.grid(row=5, column=1)
+    labelCount.grid(row=9, column=1)
 
     btnAdd = tk.Button(popup, text="Adicionar", command=add)
-    btnAdd.grid(row=6, column=1)
+    btnAdd.grid(row=11, column=1)
     btnDraw = tk.Button(popup, text="Desenhar", command=run)
-    btnDraw.grid(row=6, column=2)
+    btnDraw.grid(row=11, column=2)

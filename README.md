@@ -1,10 +1,8 @@
 primitivas-graficas-ufpa-2022
 
-Dependencias: Tkinter, Pygame
+Dependencias: Tkinter
 
 ```bash
-pip install pygame
-
 # mac
 brew install python-tk
 
