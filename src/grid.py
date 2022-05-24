@@ -29,18 +29,18 @@ class Grid:
       self.tela.create_line(0, y, self.tamanhoTela, y, fill="#808080")
 
 
-  def drawPixel(self, coords):
+  def drawPixel(self, coords, fill="#000000"):
     x, y = coords
     truex = (x)*self.tamanhoPixel + 1
     truey = (self.numPixels-y-1)*self.tamanhoPixel + 1
 
-    self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill="#000000", width=0)
+    self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill=fill, width=0)
 
 
-  def drawFromList(self, list):
+  def drawFromList(self, list, color="#000000"):
     self.drawnPoints += list
     for point in list:
-      self.drawPixel(point)
+      self.drawPixel(point, color)
 
 
   def bres(self):
@@ -226,3 +226,55 @@ class Grid:
     btnAdd.grid(row=11, column=1)
     btnDraw = tk.Button(popup, text="Desenhar", command=run)
     btnDraw.grid(row=11, column=2)
+
+  
+  def sweepFill(self):
+    def run():
+      nonlocal pointList
+      if len(pointList) != 0:
+        points = sweepFill(pointList)
+        self.drawFromList(points, color='#00FF00')
+
+        points = []
+        for index, point in enumerate(pointList):
+          if (index == len(pointList)-1):
+            points.append(bres(point, pointList[0]))
+
+          else:
+            points.append(bres(point, pointList[index+1]))
+
+        singleList = []
+
+        for list in points:
+          singleList += list
+
+        self.drawFromList(singleList)
+        pointList = []
+        labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    def add():
+      point = (int(entryx.get()), int(entryy.get()))
+      pointList.append(point)
+      labelCount.config(text=f"Pontos inseridos: {pointList}")
+
+    pointList = []
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelCount = tk.Label(popup, text="Pontos inseridos: []")
+    labelx = tk.Label(popup, text="Coordenada x do ponto: ")
+    labely = tk.Label(popup, text="Coordenada y do ponto: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+
+    labelCount.grid(row=3, column=1)
+
+    btnAdd = tk.Button(popup, text="Adicionar", command=add)
+    btnAdd.grid(row=4, column=1)
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=4, column=2)
