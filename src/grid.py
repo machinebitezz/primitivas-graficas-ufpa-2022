@@ -31,10 +31,11 @@ class Grid:
 
   def drawPixel(self, coords, fill="#000000"):
     x, y = coords
-    truex = (x)*self.tamanhoPixel + 1
-    truey = (self.numPixels-y-1)*self.tamanhoPixel + 1
+    truex = (round(self.numPixels/2)+x)*self.tamanhoPixel + 1
+    truey = (round(self.numPixels/2)-y-1)*self.tamanhoPixel + 1
 
     self.tela.create_rectangle(truex, truey, truex+self.tamanhoPixel-1, truey+self.tamanhoPixel-1, fill=fill, width=0)
+    self.drawnPoints.append(coords)
 
 
   def drawFromList(self, list, color="#000000"):
@@ -103,10 +104,49 @@ class Grid:
     btnDraw.grid(row=5, column=2)
 
 
+  def ellipsis(self):
+    def run():
+      center = (int(entryx.get()), int(entryy.get()))
+      radii = (int(entryRadius1.get()), int(entryRadius2.get()))
+
+      points = ellipsis(radii, center)
+      singleList = []
+
+      for list in points:
+        singleList += list
+
+      self.drawFromList(singleList)
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelx = tk.Label(popup, text="Coordenada x do centro: ")
+    labely = tk.Label(popup, text="Coordenada y do centro: ")
+    labelRadius1 = tk.Label(popup, text="Raio X: ")
+    labelRadius2 = tk.Label(popup, text="Raio Y: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    entryRadius1 = tk.Entry(popup)
+    entryRadius2 = tk.Entry(popup)
+    
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+    labelRadius1.grid(row=3, column=1)
+    labelRadius2.grid(row=4, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+    entryRadius1.grid(row=3, column=2)
+    entryRadius2.grid(row=4, column=2)
+
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=5, column=2)
+  
+
   def polyline(self):
     def run():
       nonlocal pointList
       if len(pointList) != 0:
+        self.polyPoints = pointList
         points = []
         for index, point in enumerate(pointList):
           if (index == len(pointList)-1):
@@ -230,18 +270,17 @@ class Grid:
   
   def sweepFill(self):
     def run():
-      nonlocal pointList
-      if len(pointList) != 0:
-        points = sweepFill(pointList)
+      if len(self.polyPoints) != 0:
+        points = sweepFill(self.polyPoints)
         self.drawFromList(points, color='#00FF00')
 
         points = []
-        for index, point in enumerate(pointList):
-          if (index == len(pointList)-1):
-            points.append(bres(point, pointList[0]))
+        for index, point in enumerate(self.polyPoints):
+          if (index == len(self.polyPoints)-1):
+            points.append(bres(point, self.polyPoints[0]))
 
           else:
-            points.append(bres(point, pointList[index+1]))
+            points.append(bres(point, self.polyPoints[index+1]))
 
         singleList = []
 
@@ -249,17 +288,26 @@ class Grid:
           singleList += list
 
         self.drawFromList(singleList)
-        pointList = []
-        labelCount.config(text=f"Pontos inseridos: {pointList}")
 
-    def add():
-      point = (int(entryx.get()), int(entryy.get()))
-      pointList.append(point)
-      labelCount.config(text=f"Pontos inseridos: {pointList}")
-
-    pointList = []
     popup = tk.Toplevel(self.window, padx=5, pady=5)
-    labelCount = tk.Label(popup, text="Pontos inseridos: []")
+
+    label = tk.Label(popup, text="Preenche o ultimo poligono desenhado com a função polilinha")
+    label.pack()
+
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.pack()
+
+
+  def recursiveFill(self):
+    def run(point):
+      if not (point in self.drawnPoints):
+        self.drawPixel(point, '#0000FF')
+        run((point[0]+1, point[1]))
+        run((point[0]-1, point[1]))
+        run((point[0], point[1]+1))
+        run((point[0], point[1]-1))
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
     labelx = tk.Label(popup, text="Coordenada x do ponto: ")
     labely = tk.Label(popup, text="Coordenada y do ponto: ")
 
@@ -272,9 +320,5 @@ class Grid:
     entryx.grid(row=1, column=2)
     entryy.grid(row=2, column=2)
 
-    labelCount.grid(row=3, column=1)
-
-    btnAdd = tk.Button(popup, text="Adicionar", command=add)
-    btnAdd.grid(row=4, column=1)
-    btnDraw = tk.Button(popup, text="Desenhar", command=run)
-    btnDraw.grid(row=4, column=2)
+    btnDraw = tk.Button(popup, text="Desenhar", command=lambda: run((int(entryx.get()), int(entryy.get()))))
+    btnDraw.grid(row=3, column=2)
