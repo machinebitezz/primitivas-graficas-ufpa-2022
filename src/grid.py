@@ -8,6 +8,8 @@ class Grid:
     self.tamanhoPixel = int(self.tamanhoTela / self.numPixels)
     self.window = window
     self.drawnPoints = []
+    self.xBox = [-(numPixels/2), (numPixels/2)]
+    self.yBox = [-(numPixels/2), (numPixels/2)]
 
     containerCanvas = tk.Frame(self.window)
     self.tela = tk.Canvas(containerCanvas, width=self.tamanhoTela, height=self.tamanhoTela)
@@ -17,10 +19,27 @@ class Grid:
     self.tela.pack()
     containerCanvas.pack(padx=5, pady=5)
 
+
+  def drawClip(self):
+    xMin, xMax = self.xBox
+    yMin, yMax = self.yBox
+    xMin = ((round(self.numPixels/2)+xMin)*self.tamanhoPixel) + 1
+    xMax = ((round(self.numPixels/2)+xMax)*self.tamanhoPixel) + self.tamanhoPixel - 1
+    yMin = ((round(self.numPixels/2)-yMin)*self.tamanhoPixel) - 1
+    yMax = ((round(self.numPixels/2)-yMax)*self.tamanhoPixel) - self.tamanhoPixel + 1
+
+    self.tela.create_line(xMin, yMin, xMin, yMax, fill="#FF0000")
+    self.tela.create_line(xMin, yMax, xMax, yMax, fill="#FF0000")
+    self.tela.create_line(xMax, yMax, xMax, yMin, fill="#FF0000")
+    self.tela.create_line(xMax, yMin, xMin, yMin, fill="#FF0000")
+
+
   
   def clear(self):
     self.drawnPoints = []
     self.tela.create_rectangle(0, 0, self.tamanhoTela+1, self.tamanhoTela+1, fill="#FFFFFF")
+
+    self.drawClip()
 
     for x in range(0, self.tamanhoTela, self.tamanhoPixel):
       self.tela.create_line(x, 0, x, self.tamanhoTela, fill="#808080")
@@ -46,10 +65,13 @@ class Grid:
 
   def bres(self):
     def run():
+      self.clear()
       p1 = int(entryx1.get()), int(entryy1.get())
       p2 = (int(entryx2.get()), int(entryy2.get()))
 
-      self.drawFromList(bres(p1, p2))
+      self.drawFromList(cohenSutherland((p1, p2), tuple(self.xBox), tuple(self.yBox)))
+
+      # self.drawFromList()
 
     popup = tk.Toplevel(self.window, padx=5, pady=5)
     labelx1 = tk.Label(popup, text="Coordenada x do ponto 1: ")
@@ -78,6 +100,7 @@ class Grid:
 
   def cricle(self):
     def run():
+      self.clear()
       center = (int(entryx.get()), int(entryy.get()))
       radius = int(entryRadius.get())
 
@@ -106,6 +129,7 @@ class Grid:
 
   def ellipsis(self):
     def run():
+      self.clear()
       center = (int(entryx.get()), int(entryy.get()))
       radii = (int(entryRadius1.get()), int(entryRadius2.get()))
 
@@ -144,16 +168,17 @@ class Grid:
 
   def polyline(self):
     def run():
+      self.clear()
       nonlocal pointList
       if len(pointList) != 0:
-        self.polyPoints = pointList
+        self.polyPoints = pointList.copy()
         points = []
         for index, point in enumerate(pointList):
           if (index == len(pointList)-1):
-            points.append(bres(point, pointList[0]))
+            points.append(cohenSutherland((point, pointList[0]), tuple(self.xBox), tuple(self.yBox)))
 
           else:
-            points.append(bres(point, pointList[index+1]))
+            points.append(cohenSutherland((point, pointList[index+1]), tuple(self.xBox), tuple(self.yBox)))
 
         singleList = []
         for list in points:
@@ -192,6 +217,7 @@ class Grid:
 
   def curve(self):
     def run():
+      self.clear()
       nonlocal pointList
       if len(pointList) != 0:
         n = int(entryDegree.get())
@@ -203,7 +229,7 @@ class Grid:
         
         for index, point in enumerate(bezierPoints):
           if (index < len(bezierPoints)-1):
-            points.append(bres(tuple(point), tuple(bezierPoints[index+1])))
+            points.append(cohenSutherland((tuple(point), tuple(bezierPoints[index+1])), tuple(self.xBox), tuple(self.yBox)))
 
         singleList = []
         for list in points:
@@ -270,17 +296,18 @@ class Grid:
   
   def sweepFill(self):
     def run():
+      self.clear()
       if len(self.polyPoints) != 0:
-        points = sweepFill(self.polyPoints)
+        points = sweepFill(sutherlandHogdman(self.polyPoints, self.xBox, self.yBox))
         self.drawFromList(points, color='#00FF00')
 
         points = []
         for index, point in enumerate(self.polyPoints):
           if (index == len(self.polyPoints)-1):
-            points.append(bres(point, self.polyPoints[0]))
+            points.append(cohenSutherland((point, self.polyPoints[0]), tuple(self.xBox), tuple(self.yBox)))
 
           else:
-            points.append(bres(point, self.polyPoints[index+1]))
+            points.append(cohenSutherland((point, self.polyPoints[index+1]), tuple(self.xBox), tuple(self.yBox)))
 
         singleList = []
 
@@ -322,3 +349,36 @@ class Grid:
 
     btnDraw = tk.Button(popup, text="Desenhar", command=lambda: run((int(entryx.get()), int(entryy.get()))))
     btnDraw.grid(row=3, column=2)
+
+
+  def adjustClippingBox(self):
+    def run():
+      self.clear()
+      self.xBox = [int(entryxmin.get()), int(entryxmax.get())]
+      self.yBox = [int(entryymin.get()), int(entryymax.get())]
+
+      self.clear()
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelxmin = tk.Label(popup, text="Coordenada x minima: ")
+    labelxmax = tk.Label(popup, text="Coordenada x máxima: ")
+    labelymin = tk.Label(popup, text="Coordenada y minima: ")
+    labelymax = tk.Label(popup, text="Coordenada y máxima: ")
+
+    entryxmin = tk.Entry(popup)
+    entryxmax = tk.Entry(popup)
+    entryymin = tk.Entry(popup)
+    entryymax = tk.Entry(popup)
+    
+    labelxmin.grid(row=1, column=1)
+    labelxmax.grid(row=2, column=1)
+    labelymin.grid(row=3, column=1)
+    labelymax.grid(row=4, column=1)
+
+    entryxmin.grid(row=1, column=2)
+    entryxmax.grid(row=2, column=2)
+    entryymin.grid(row=3, column=2)
+    entryymax.grid(row=4, column=2)
+    
+    btnDraw = tk.Button(popup, text="Ajustar", command=run)
+    btnDraw.grid(row=5, column=2)
