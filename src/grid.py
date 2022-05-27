@@ -298,7 +298,7 @@ class Grid:
     def run():
       self.clear()
       if len(self.polyPoints) != 0:
-        points = sweepFill(self.polyPoints)
+        points = sweepFill(sutherlandHogdman(self.polyPoints, self.xBox, self.yBox))
         self.drawFromList(points, color='#00FF00')
 
         points = []
