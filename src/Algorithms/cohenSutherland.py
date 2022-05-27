@@ -27,7 +27,7 @@ def msb(c1, c2):
   if (n == 0):
     return 0
 
-  msb = 0;
+  msb = 0
   n = int(n / 2)
 
   while (n > 0):
@@ -53,10 +53,10 @@ def findIntersection(points: tuple, xBox: tuple, yBox: tuple, bit: int) -> tuple
   p1, p2 = points
 
   if bit == 0b1000:
-    return ((((yMin - p1[1]) * (p2[0] - p1[0])) / (p2[1] - p1[1])) + p1[0], yMax)
+    return ((((yMax - p1[1]) * (p2[0] - p1[0])) / (p2[1] - p1[1])) + p1[0], yMax)
 
   elif bit == 0b0100:
-    return ((((yMax - p1[1]) * (p2[0] - p1[0])) / (p2[1] - p1[1])) + p1[0], yMin)
+    return ((((yMin - p1[1]) * (p2[0] - p1[0])) / (p2[1] - p1[1])) + p1[0], yMin)
 
   elif bit == 0b0010:
     return (xMax, (((xMin - p1[0]) * (p2[1] - p1[1])) / (p2[0] - p1[0])) + p1[1])
@@ -70,7 +70,9 @@ def cohenSutherland(points: tuple, xBox: tuple, yBox: tuple) -> tuple:
   c1 = getBinary(p1, xBox, yBox)
   c2 = getBinary(p2, xBox, yBox)
 
-  if (c1 | c2) == 0b0000: 
+  if (c1 | c2) == 0b0000:
+    p1 = (round(p1[0]), round(p1[1]))
+    p2 = (round(p2[0]), round(p2[1]))
     return bres(p1, p2)
 
   elif (c1 & c2) != 0b0000:
@@ -82,7 +84,7 @@ def cohenSutherland(points: tuple, xBox: tuple, yBox: tuple) -> tuple:
     intersection = findIntersection(points, xBox, yBox, difBit)
 
     if getBit(c1, difBit):
-      cohenSutherland((p1, intersection), xBox, yBox)
+      return cohenSutherland((intersection, p2), xBox, yBox)
 
     else: 
-      cohenSutherland((intersection, p2), xBox, yBox)
+      return cohenSutherland((p1, intersection), xBox, yBox)
