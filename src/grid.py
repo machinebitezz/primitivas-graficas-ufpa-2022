@@ -171,7 +171,7 @@ class Grid:
       self.clear()
       nonlocal pointList
       if len(pointList) != 0:
-        self.polyPoints = pointList
+        self.polyPoints = pointList.copy()
         points = []
         for index, point in enumerate(pointList):
           if (index == len(pointList)-1):

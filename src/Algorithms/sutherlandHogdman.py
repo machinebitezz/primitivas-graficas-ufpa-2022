@@ -3,32 +3,85 @@ def sutherlandHogdman(pointlist, xBox, yBox, side = 0):
   xMin, xMax = xBox
   yMin, yMax = yBox
 
-  temp = [xMin, yMin, xMax, yMax]
-
-  comparator = temp[side]
-
-  i1 = 0 if side // 2 == 0 else 1
-  i2 = 0 if side // 2 != 0 else 1
-
   for i, p1 in enumerate(pointlist):
     p2 = pointlist[(i+1)%len(pointlist)]
 
-    if p1[i1] > comparator:
-      if p2[i1] > comparator:
+    if p1[0] > xMin:
+      if p2[0] > xMin:
         newPolygon.append(p2)
       
       else:
-        newPolygon.append((comparator, round(((comparator - p1[i1]) * (p2[i2] - p1[i2]) / (p2[i1] - p1[i1])) + p1[i2])))
+        newPolygon.append((xMin, round(((xMin - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0])) + p1[1])))
 
     else:
-      if p2[i1] > comparator:
-        newPolygon.append((comparator, round(((comparator - p1[i1]) * (p2[i2] - p1[i2]) / (p2[i1] - p1[i1])) + p1[i2])))
+      if p2[0] > xMin:
+        newPolygon.append((xMin, round(((xMin - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0])) + p1[1])))
         newPolygon.append(p2)
 
       else: 
         pass
 
-  if side != 3:
-    return sutherlandHogdman(newPolygon, xBox, yBox, side=side+1)
-  else:
-    return newPolygon
+  pointlist = newPolygon.copy()
+  newPolygon = []
+
+  for i, p1 in enumerate(pointlist):
+    p2 = pointlist[(i+1)%len(pointlist)]
+
+    if p1[0] < xMax:
+      if p2[0] < xMax:
+        newPolygon.append(p2)
+      
+      else:
+        newPolygon.append((xMax, round(((xMax - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0])) + p1[1])))
+
+    else:
+      if p2[0] < xMax:
+        newPolygon.append((xMax, round(((xMax - p1[0]) * (p2[1] - p1[1]) / (p2[0] - p1[0])) + p1[1])))
+        newPolygon.append(p2)
+
+      else: 
+        pass
+
+  pointlist = newPolygon.copy()
+  newPolygon = []
+
+  for i, p1 in enumerate(pointlist):
+    p2 = pointlist[(i+1)%len(pointlist)]
+
+    if p1[1] > yMin:
+      if p2[1] > yMin:
+        newPolygon.append(p2)
+      
+      else:
+        newPolygon.append((round(((yMin - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1])) + p1[0]), yMin))
+
+    else:
+      if p2[1] > yMin:
+        newPolygon.append((round(((yMin - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1])) + p1[0]), yMin))
+        newPolygon.append(p2)
+
+      else: 
+        pass
+
+  pointlist = newPolygon.copy()
+  newPolygon = []
+
+  for i, p1 in enumerate(pointlist):
+    p2 = pointlist[(i+1)%len(pointlist)]
+
+    if p1[1] < yMax:
+      if p2[1] < yMax:
+        newPolygon.append(p2)
+      
+      else:
+        newPolygon.append((round(((yMax - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1])) + p1[0]), yMax))
+
+    else:
+      if p2[1] < yMax:
+        newPolygon.append((round(((yMax - p1[1]) * (p2[0] - p1[0]) / (p2[1] - p1[1])) + p1[0]), yMax))
+        newPolygon.append(p2)
+
+      else: 
+        pass
+
+  return newPolygon
