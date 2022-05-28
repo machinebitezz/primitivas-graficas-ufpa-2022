@@ -382,3 +382,133 @@ class Grid:
     
     btnDraw = tk.Button(popup, text="Ajustar", command=run)
     btnDraw.grid(row=5, column=2)
+
+  def translate(self):
+    def run():
+      self.clear()
+      factors = int(entryx.get()), int(entryy.get())
+
+      pointList = translate(self.polyPoints, factors)
+
+      points = []
+
+      for index, point in enumerate(pointList):
+        if (index == len(pointList)-1):
+          points.append(cohenSutherland((point, pointList[0]), tuple(self.xBox), tuple(self.yBox)))
+
+        else:
+          points.append(cohenSutherland((point, pointList[index+1]), tuple(self.xBox), tuple(self.yBox)))
+
+      singleList = []
+
+      for list in points:
+        singleList += list
+
+      self.polyPoints = singleList
+
+      self.drawFromList(singleList)
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelx = tk.Label(popup, text="Fator de translação em x: ")
+    labely = tk.Label(popup, text="Fator de translação em y: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+    
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=3, column=2)
+
+
+  def scale(self):
+    def run():
+      self.clear()
+      factors = float(entryx.get()), float(entryy.get())
+
+      pointList = scale(self.polyPoints, factors)
+
+      points = []
+
+      for index, point in enumerate(pointList):
+        if (index == len(pointList)-1):
+          points.append(cohenSutherland((point, pointList[0]), tuple(self.xBox), tuple(self.yBox)))
+
+        else:
+          points.append(cohenSutherland((point, pointList[index+1]), tuple(self.xBox), tuple(self.yBox)))
+
+      singleList = []
+
+      for list in points:
+        singleList += list
+
+      self.polyPoints = singleList
+
+      self.drawFromList(singleList)
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labelx = tk.Label(popup, text="Fator de escala em x: ")
+    labely = tk.Label(popup, text="Fator de escala em y: ")
+
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    
+    labelx.grid(row=1, column=1)
+    labely.grid(row=2, column=1)
+
+    entryx.grid(row=1, column=2)
+    entryy.grid(row=2, column=2)
+    
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=3, column=2)
+
+
+  def rotate(self):
+    def run():
+      self.clear()
+      pivot = int(entryx.get()), int(entryy.get())
+      angle = float(entrydeg.get())
+
+      pointList = rotate(self.polyPoints, angle, pivot)
+
+      points = []
+
+      for index, point in enumerate(pointList):
+        if (index == len(pointList)-1):
+          points.append(cohenSutherland((point, pointList[0]), tuple(self.xBox), tuple(self.yBox)))
+
+        else:
+          points.append(cohenSutherland((point, pointList[index+1]), tuple(self.xBox), tuple(self.yBox)))
+
+      singleList = []
+
+      for list in points:
+        singleList += list
+
+      self.polyPoints = singleList
+
+      self.drawFromList(singleList)
+
+    popup = tk.Toplevel(self.window, padx=5, pady=5)
+    labeldeg = tk.Label(popup, text="Graus: ")
+    labelx = tk.Label(popup, text="Coordenada x do pivô: ")
+    labely = tk.Label(popup, text="Coordenada y do pivô: ")
+
+    entrydeg = tk.Entry(popup)
+    entryx = tk.Entry(popup)
+    entryy = tk.Entry(popup)
+    
+    labeldeg.grid(row=1, column= 1)
+    labelx.grid(row=2, column=1)
+    labely.grid(row=3, column=1)
+
+    entrydeg.grid(row=1, column=2)
+    entryx.grid(row=2, column=2)
+    entryy.grid(row=3, column=2)
+    
+    btnDraw = tk.Button(popup, text="Desenhar", command=run)
+    btnDraw.grid(row=4, column=2)

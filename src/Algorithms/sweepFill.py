@@ -1,6 +1,6 @@
 from copy import deepcopy
 
-def sweepFill(points):
+def sweepFill(points: list) -> list:
   minY = float('inf')
   maxY = float('-inf')
   toPaint = []
