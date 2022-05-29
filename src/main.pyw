@@ -19,6 +19,7 @@ btnClip = tk.Button(containerLaunchers, text="Recorte", command=lambda: grid.adj
 btnTranslate = tk.Button(containerLaunchers, text="Translação", command=lambda: grid.translate())
 btnScale = tk.Button(containerLaunchers, text="Escala", command=lambda: grid.scale())
 btnRotate = tk.Button(containerLaunchers, text="Rotação", command=lambda: grid.rotate())
+btnProject = tk.Button(containerLaunchers, text="Projeções", command=lambda: grid.projection())
 btnClean = tk.Button(window, text="Limpar", command=grid.clear)
 
 btnBresenham.grid(row=1, column=1, sticky='nesw')
@@ -32,6 +33,7 @@ btnClip.grid(row=3, column=2, sticky='nesw')
 btnTranslate.grid(row=3, column=3, sticky='nesw')
 btnScale.grid(row=4, column=1, sticky='nesw')
 btnRotate.grid(row=4, column=2, sticky='nesw')
+btnProject.grid(row=4, column=3, sticky='nesw')
 
 btnClean.pack()
 containerLaunchers.pack(padx=5, pady=5)
