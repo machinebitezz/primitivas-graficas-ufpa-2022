@@ -1,4 +1,4 @@
-def sutherlandHogdman(pointlist, xBox, yBox, side = 0):
+def sutherlandHogdman(pointlist: list, xBox: tuple, yBox) -> list:
   newPolygon = []
   xMin, xMax = xBox
   yMin, yMax = yBox
