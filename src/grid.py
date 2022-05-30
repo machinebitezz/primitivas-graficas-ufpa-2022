@@ -1,7 +1,6 @@
 import tkinter as tk
 from Algorithms.index import *
 
-
 class Grid:
     def __init__(self, window, numPixels, tamanhoTela):
         self.numPixels = numPixels

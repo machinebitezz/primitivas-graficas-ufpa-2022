@@ -1,5 +1,7 @@
 primitivas-graficas-ufpa-2022
 
+Autores: Gustavo Rodrigues e Lívia Carrera
+
 Dependencias: Tkinter
 
 ```bash
