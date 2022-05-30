@@ -73,9 +73,9 @@ class Grid:
         self.drawnPoints.append(coords)
 
     def drawFromList(self, list, color="#000000"):
-        self.drawnPoints += list
         for point in list:
             self.drawPixel(point, color)
+            self.drawnPoints.append(tuple(point))
 
     def bres(self):
         def run():
